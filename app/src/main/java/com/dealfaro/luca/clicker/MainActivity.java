@@ -3,6 +3,8 @@ package com.dealfaro.luca.clicker;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,9 @@ public class MainActivity extends ActionBarActivity {
 
     // To remember the post we received.
     public static final String PREF_POSTS = "pref_posts";
+    private double lat = 0;
+    private double lng = 0;
+    private double myKey = Math.random();
 
     // Uploader.
     private ServerCall uploader;
@@ -149,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
     }
 
 
@@ -162,7 +169,32 @@ public class MainActivity extends ActionBarActivity {
         if (result != null) {
             displayResult(result);
         }
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(View.INVISIBLE);
     }
+
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            // Do something with the location you receive.
+            TextView tv = (TextView) findViewById(R.id.textView);
+            tv.setText(lat + " " + lng);
+            lat = location.getLatitude();
+            lng = location.getLongitude();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+    };
 
 
 
@@ -177,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void clickButton(View v) {
+    public void clickButtonPost(View v) {
 
         // Get the text we want to send.
         EditText et = (EditText) findViewById(R.id.editText);
@@ -187,12 +219,14 @@ public class MainActivity extends ActionBarActivity {
         PostMessageSpec myCallSpec = new PostMessageSpec();
 
 
-        myCallSpec.url = SERVER_URL_PREFIX + "post_msg.json";
+        myCallSpec.url = SERVER_URL_PREFIX + "put_local.json";
         myCallSpec.context = MainActivity.this;
         // Let's add the parameters.
         HashMap<String,String> m = new HashMap<String,String>();
-        m.put("app_id", MY_APP_ID);
+        m.put("msg_id", reallyComputeHash(msg + myKey));
         m.put("msg", msg);
+        m.put("lat", lat);
+        m.put("lng", lng);
         myCallSpec.setParams(m);
         // Actual server call.
         if (uploader != null) {
@@ -201,8 +235,14 @@ public class MainActivity extends ActionBarActivity {
         }
         uploader = new ServerCall();
         uploader.execute(myCallSpec);
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(View.VISIBLE);
     }
 
+    public void clickButtonRef(View v) {
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(View.VISIBLE);
+    }
 
     private String reallyComputeHash(String s) {
         // Computes the crypto hash of string s, in a web-safe format.
@@ -235,11 +275,16 @@ public class MainActivity extends ActionBarActivity {
             SharedPreferences.Editor editor = settings.edit();
             editor.putString(PREF_POSTS, result);
             editor.commit();
+            ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+            pb.setVisibility(View.INVISIBLE);
         }
     }
 
 
     private void displayResult(String result) {
+        if(result == null) {
+            return;
+        }
         Gson gson = new Gson();
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
