@@ -104,23 +104,23 @@ public class MainActivity extends ActionBarActivity {
 
             // Fills in the view.
             TextView tv = (TextView) newView.findViewById(R.id.itemText);
-            Button b = (Button) newView.findViewById(R.id.itemButton);
+            //Button b = (Button) newView.findViewById(R.id.itemButton);
             tv.setText(w.textLabel);
-            b.setText(w.buttonLabel);
+            //b.setText(w.buttonLabel);
 
             // Sets a listener for the button, and a tag for the button as well.
-            b.setTag(new Integer(position));
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            //b.setTag(new Integer(position));
+            //b.setOnClickListener(new View.OnClickListener() {
+            //    @Override
+            //    public void onClick(View v) {
                     // Reacts to a button press.
                     // Gets the integer tag of the button.
-                    String s = v.getTag().toString();
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, s, duration);
-                    toast.show();
-                }
-            });
+            //        String s = v.getTag().toString();
+            //        int duration = Toast.LENGTH_SHORT;
+            //        Toast toast = Toast.makeText(context, s, duration);
+            //        toast.show();
+            //    }
+            //});
 
             // Set a listener for the whole list item.
             newView.setTag(w.textLabel);
