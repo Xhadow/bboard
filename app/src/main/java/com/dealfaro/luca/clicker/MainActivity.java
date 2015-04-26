@@ -225,8 +225,8 @@ public class MainActivity extends ActionBarActivity {
         HashMap<String,String> m = new HashMap<String,String>();
         m.put("msg_id", reallyComputeHash(msg + myKey));
         m.put("msg", msg);
-        m.put("lat", lat);
-        m.put("lng", lng);
+        m.put("lat", lat + "");
+        m.put("lng", lng + "");
         myCallSpec.setParams(m);
         // Actual server call.
         if (uploader != null) {
