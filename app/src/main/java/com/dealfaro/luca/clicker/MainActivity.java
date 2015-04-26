@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
     private static final float GOOD_ACCURACY_METERS = 100;
 
     // This is an id for my app, to keep the key space separate from other apps.
-    private static final String MY_APP_ID = "luca_bboard";
+    //private static final String MY_APP_ID = "luca_bboard";
 
     private static final String SERVER_URL_PREFIX = "https://luca-teaching.appspot.com/store/default/";
 
@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<String> accountList;
 
     private class ListElement {
-        ListElement() {};
+        ListElement() {}
 
         public String textLabel;
         public String buttonLabel;
