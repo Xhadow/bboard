@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -69,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
         ListElement() {}
 
         public String textLabel;
-        public String buttonLabel;
+        //public String buttonLabel;
     }
 
     private ArrayList<ListElement> aList;
@@ -223,10 +222,10 @@ public class MainActivity extends ActionBarActivity {
         myCallSpec.context = MainActivity.this;
         // Let's add the parameters.
         HashMap<String,String> m = new HashMap<String,String>();
-        m.put("msg_id", reallyComputeHash(msg + myKey));
-        m.put("msg", msg);
         m.put("lat", lat + "");
         m.put("lng", lng + "");
+        m.put("msg_id", msg + myKey);
+        m.put("msg", msg);
         myCallSpec.setParams(m);
         // Actual server call.
         if (uploader != null) {
@@ -292,7 +291,7 @@ public class MainActivity extends ActionBarActivity {
         for (int i = 0; i < ml.messages.length; i++) {
             ListElement ael = new ListElement();
             ael.textLabel = ml.messages[i];
-            ael.buttonLabel = "Click";
+            //ael.buttonLabel = "Click";
             aList.add(ael);
         }
         aa.notifyDataSetChanged();
