@@ -1,7 +1,7 @@
 package com.dealfaro.luca.clicker;
 
 public class PostProcessPair {
-    PostProcessPair() {};
+    PostProcessPair() {}
     public ServerCallSpec spec;
     public String result;
 }

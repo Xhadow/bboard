@@ -19,7 +19,7 @@ public class ServerCallSpec {
     private static final String LOG_TAG = "ServerCallSpec";
 
     // Specification for accessing the server.
-    ServerCallSpec() {};
+    ServerCallSpec() {}
 
     public String url;
     public Context context;
@@ -27,7 +27,7 @@ public class ServerCallSpec {
     public void useResult(Context context, String r) {}
 
     public boolean setParams(HashMap<String, String> params) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
         Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, String> pair = it.next();
