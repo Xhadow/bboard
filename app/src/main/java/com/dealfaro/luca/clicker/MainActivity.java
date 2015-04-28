@@ -25,8 +25,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.apache.http.client.methods.HttpGet;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -36,21 +34,12 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    Location lastLocation;
-    private double lastAccuracy = (double) 1e10;
-    private long lastAccuracyTime = 0;
-
     private static final String LOG_TAG = "lclicker";
-
-    private static final float GOOD_ACCURACY_METERS = 100;
 
     // This is an id for my app, to keep the key space separate from other apps.
     //private static final String MY_APP_ID = "luca_bboard";
 
     private static final String SERVER_URL_PREFIX = "https://luca-teaching.appspot.com/store/default/";
-
-    // To remember the favorite account.
-    public static final String PREF_ACCOUNT = "pref_account";
 
     // To remember the post we received.
     public static final String PREF_POSTS = "pref_posts";
@@ -60,11 +49,6 @@ public class MainActivity extends ActionBarActivity {
 
     // Uploader.
     private ServerCall uploader;
-
-    // Remember whether we have already successfully checked in.
-    private boolean checkinSuccessful = false;
-
-    private ArrayList<String> accountList;
 
     private class ListElement {
         ListElement() {}
@@ -105,24 +89,7 @@ public class MainActivity extends ActionBarActivity {
 
             // Fills in the view.
             TextView tv = (TextView) newView.findViewById(R.id.itemText);
-            //Button b = (Button) newView.findViewById(R.id.itemButton);
             tv.setText(w.textLabel);
-            //b.setText(w.buttonLabel);
-
-            // Sets a listener for the button, and a tag for the button as well.
-            //b.setTag(new Integer(position));
-            //b.setOnClickListener(new View.OnClickListener() {
-            //    @Override
-            //    public void onClick(View v) {
-                    // Reacts to a button press.
-                    // Gets the integer tag of the button.
-            //        String s = v.getTag().toString();
-            //        int duration = Toast.LENGTH_SHORT;
-            //        Toast toast = Toast.makeText(context, s, duration);
-            //        toast.show();
-            //    }
-            //});
-
             // Set a listener for the whole list item.
             newView.setTag(w.textLabel);
             newView.setOnClickListener(new View.OnClickListener() {
@@ -164,10 +131,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         // First super, then do stuff.
-        // Let us display the previous posts, if any.
+        //Location listener listening for location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        //Start progress bar and set it to invisible, visible during loading times.
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
         pb.setVisibility(View.INVISIBLE);
     }
@@ -175,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            // Do something with the location you receive.
+            // Get latitude and longitude and then display in bottom textview
             TextView tv = (TextView) findViewById(R.id.textView);
             tv.setText("Latitude: " + lat + "\nLongitude: " + lng);
             lat = location.getLatitude();
@@ -204,12 +172,13 @@ public class MainActivity extends ActionBarActivity {
         super.onPause();
     }
 
-
+    //Sends the string to the server for the list and also updates the list at the same time.
     public void clickButtonPost(View v) {
 
         // Get the text we want to send.
         EditText et = (EditText) findViewById(R.id.editText);
         String msg = et.getText().toString();
+        //Set the textview to empty once the string is sent to the server
         et.setText("");
 
         // Then, we start the call.
@@ -219,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
         myCallSpec.url = SERVER_URL_PREFIX + "put_local.json";
         myCallSpec.context = MainActivity.this;
         // Let's add the parameters.
-        HashMap<String,String> m = new HashMap<String,String>();
+        HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
         m.put("msgid", reallyComputeHash(msg + myKey));
@@ -232,10 +201,12 @@ public class MainActivity extends ActionBarActivity {
         }
         uploader = new ServerCall();
         uploader.execute(myCallSpec);
+        //Set spinner to visible so it shows that it is busy loading the list
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
         pb.setVisibility(View.VISIBLE);
     }
 
+    //Refreshes the list with new messages, if any, from the server in current location.
     public void clickButtonRef(View v) {
         // Then, we start the call.
         PostMessageSpec myCallSpec = new PostMessageSpec();
@@ -243,7 +214,7 @@ public class MainActivity extends ActionBarActivity {
         myCallSpec.url = SERVER_URL_PREFIX + "get_local.json";
         myCallSpec.context = MainActivity.this;
         // Let's add the parameters.
-        HashMap<String,String> m = new HashMap<String,String>();
+        HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
         myCallSpec.setParams(m);
@@ -254,6 +225,7 @@ public class MainActivity extends ActionBarActivity {
         }
         uploader = new ServerCall();
         uploader.execute(myCallSpec);
+        //Set spinner to visible so it shows that it is busy loading the list
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
         pb.setVisibility(View.VISIBLE);
     }
@@ -291,7 +263,8 @@ public class MainActivity extends ActionBarActivity {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString(PREF_POSTS, result);
-            editor.commit();
+            editor.apply();
+            //Sets spinner to invisible since it no longer is loading
             ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
             pb.setVisibility(View.INVISIBLE);
         }
@@ -309,8 +282,6 @@ public class MainActivity extends ActionBarActivity {
         for (int i = 0; i < 10; i++) {
             ListElement ael = new ListElement();
             ael.textLabel = ml.messages[i].msg;
-            //ael.textLabel = ml.messages[i].ts;
-            //ael.buttonLabel = "Click";
             aList.add(ael);
         }
         aa.notifyDataSetChanged();
