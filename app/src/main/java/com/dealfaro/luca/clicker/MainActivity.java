@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.apache.http.client.methods.HttpGet;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -144,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        aList = new ArrayList<ListElement>();
+        aList = new ArrayList<>();
         aa = new MyAdapter(this, R.layout.list_element, aList);
         ListView myListView = (ListView) findViewById(R.id.listView);
         myListView.setAdapter(aa);
@@ -163,11 +165,6 @@ public class MainActivity extends ActionBarActivity {
         super.onResume();
         // First super, then do stuff.
         // Let us display the previous posts, if any.
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        String result = settings.getString(PREF_POSTS, null);
-        if (result != null) {
-            displayResult(result);
-        }
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -180,7 +177,7 @@ public class MainActivity extends ActionBarActivity {
         public void onLocationChanged(Location location) {
             // Do something with the location you receive.
             TextView tv = (TextView) findViewById(R.id.textView);
-            tv.setText(lat + " " + lng);
+            tv.setText("Latitude: " + lat + "\nLongitude: " + lng);
             lat = location.getLatitude();
             lng = location.getLongitude();
         }
@@ -213,6 +210,7 @@ public class MainActivity extends ActionBarActivity {
         // Get the text we want to send.
         EditText et = (EditText) findViewById(R.id.editText);
         String msg = et.getText().toString();
+        et.setText("");
 
         // Then, we start the call.
         PostMessageSpec myCallSpec = new PostMessageSpec();
@@ -224,7 +222,7 @@ public class MainActivity extends ActionBarActivity {
         HashMap<String,String> m = new HashMap<String,String>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
-        m.put("msg_id", msg + myKey);
+        m.put("msgid", reallyComputeHash(msg + myKey));
         m.put("msg", msg);
         myCallSpec.setParams(m);
         // Actual server call.
@@ -239,6 +237,23 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void clickButtonRef(View v) {
+        // Then, we start the call.
+        PostMessageSpec myCallSpec = new PostMessageSpec();
+
+        myCallSpec.url = SERVER_URL_PREFIX + "get_local.json";
+        myCallSpec.context = MainActivity.this;
+        // Let's add the parameters.
+        HashMap<String,String> m = new HashMap<String,String>();
+        m.put("lat", lat + "");
+        m.put("lng", lng + "");
+        myCallSpec.setParams(m);
+        // Actual server call.
+        if (uploader != null) {
+            // There was already an upload in progress.
+            uploader.cancel(true);
+        }
+        uploader = new ServerCall();
+        uploader.execute(myCallSpec);
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
         pb.setVisibility(View.VISIBLE);
     }
@@ -266,6 +281,9 @@ public class MainActivity extends ActionBarActivity {
     class PostMessageSpec extends ServerCallSpec {
         @Override
         public void useResult(Context context, String result) {
+            if(result == null) {
+                return;
+            }
             // Translates the string result, decoding the Json.
             Log.i(LOG_TAG, "Received string: " + result);
             displayResult(result);
@@ -288,9 +306,10 @@ public class MainActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        for (int i = 0; i < ml.messages.length; i++) {
+        for (int i = 0; i < 10; i++) {
             ListElement ael = new ListElement();
-            ael.textLabel = ml.messages[i];
+            ael.textLabel = ml.messages[i].msg;
+            //ael.textLabel = ml.messages[i].ts;
             //ael.buttonLabel = "Click";
             aList.add(ael);
         }
