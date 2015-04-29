@@ -10,6 +10,6 @@ public class Message {
     public String msg;
     //public String userid;
     //public String dest;
-    //public String ts;
+    public String ts;
     //public String msgid;
 }

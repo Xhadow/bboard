@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
     <corners
-        android:radius="21dp"
+        android:radius="0dp"
         />
     <gradient
-        android:gradientRadius="500"
+        android:gradientRadius="1500"
         android:centerX="50%"
-        android:centerY="100%"
-        android:centerColor="#6DA0A8"
-        android:startColor="#92DDE8"
+        android:centerY="50%"
+        android:centerColor="#FFFACD"
+        android:startColor="#FAFAD2"
         android:endColor="#FFFFFF"
         android:type="radial"
         />
@@ -19,7 +19,7 @@
         android:bottom="0dp"
         />
     <size
-        android:width="140dp"
+        android:width="120dp"
         android:height="50dp"
         />
     <stroke

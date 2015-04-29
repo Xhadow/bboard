@@ -286,7 +286,7 @@ public class MainActivity extends ActionBarActivity {
         aList.clear();
         for (int i = 0; i < 10; i++) {
             ListElement ael = new ListElement();
-            ael.textLabel = ml.messages[i].msg;
+            ael.textLabel = ml.messages[i].msg + "\n" + ml.messages[i].ts;
             aList.add(ael);
         }
         aa.notifyDataSetChanged();

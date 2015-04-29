@@ -4,9 +4,9 @@
         android:radius="21dp"
         />
     <gradient
-        android:gradientRadius="500"
+        android:gradientRadius="1500"
         android:centerX="50%"
-        android:centerY="100%"
+        android:centerY="50%"
         android:centerColor="#6DA0A8"
         android:startColor="#92DDE8"
         android:endColor="#FFFFFF"
@@ -19,11 +19,11 @@
         android:bottom="0dp"
         />
     <size
-        android:width="140dp"
+        android:width="120dp"
         android:height="50dp"
         />
     <stroke
         android:width="3dp"
-        android:color="#228713"
+        android:color="#FFFFFF"
         />
 </shape>
