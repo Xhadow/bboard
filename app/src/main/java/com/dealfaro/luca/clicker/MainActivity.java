@@ -33,7 +33,7 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-
+    Location lastLocation;
     private static final String LOG_TAG = "lclicker";
 
     // This is an id for my app, to keep the key space separate from other apps.
@@ -133,7 +133,9 @@ public class MainActivity extends ActionBarActivity {
         // First super, then do stuff.
         //Location listener listening for location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         //Start progress bar and set it to invisible, visible during loading times.
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
@@ -164,6 +166,9 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
+        // Stops the location updates.
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
         // Stops the upload if any.
         if (uploader != null) {
             uploader.cancel(true);
