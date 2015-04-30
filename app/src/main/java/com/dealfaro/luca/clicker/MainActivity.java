@@ -147,7 +147,7 @@ public class MainActivity extends ActionBarActivity {
         public void onLocationChanged(Location location) {
             // Get latitude and longitude and then display in bottom textview
             TextView tv = (TextView) findViewById(R.id.textView);
-            tv.setText("Latitude: " + lat + "\nLongitude: " + lng);
+            tv.setText("  Latitude: " + lat + "\n  Longitude: " + lng);
             lat = location.getLatitude();
             lng = location.getLongitude();
         }
