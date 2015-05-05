@@ -8,8 +8,10 @@ public class Message {
     public Message() {}
 
     public String msg;
-    //public String userid;
-    //public String dest;
+    public String userid;
+    public String dest;
     public String ts;
-    //public String msgid;
+    public String msgid;
+    public String buttonLabel;
+    public boolean conversation;
 }

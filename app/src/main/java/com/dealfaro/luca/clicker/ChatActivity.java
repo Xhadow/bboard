@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -34,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class ChatActivity extends ActionBarActivity {
     Location lastLocation;
     private static final String LOG_TAG = "lclicker";
 
@@ -49,6 +48,7 @@ public class MainActivity extends ActionBarActivity {
     private double lng = 0;
     private double myKey = Math.random();
     private static String user_id;
+    private static String other_user_id;
     // Uploader.
     private ServerCall uploader;
 
@@ -91,25 +91,8 @@ public class MainActivity extends ActionBarActivity {
 
             // Fills in the view.
             TextView tv = (TextView) newView.findViewById(R.id.itemText);
-            Button b = (Button) newView.findViewById(R.id.itemButton);
-            b.setText(w.buttonLabel);
             tv.setText(w.msg);
 
-            b.setTag(new Integer(position));
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Reacts to a button press.
-                    // Gets the integer tag of the button.
-                    Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-                    intent.putExtra("dest", w.userid);
-                    startActivity(intent);
-                    String s = v.getTag().toString();
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, s, duration);
-                    toast.show();
-                }
-            });
             // Set a listener for the whole list item.
             newView.setTag(w.msg);
             newView.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +124,8 @@ public class MainActivity extends ActionBarActivity {
         AppInfo appInfo = new AppInfo();
         appInfo = AppInfo.getInstance(this);
         user_id = appInfo.userid;
+        Intent intent = getIntent();
+        other_user_id = intent.getStringExtra("dest");
     }
 
     @Override
@@ -214,11 +199,12 @@ public class MainActivity extends ActionBarActivity {
 
 
         myCallSpec.url = SERVER_URL_PREFIX + "put_local.json";
-        myCallSpec.context = MainActivity.this;
+        myCallSpec.context = ChatActivity.this;
         // Let's add the parameters.
         HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
+        m.put("dest", other_user_id);
         m.put("msgid", reallyComputeHash(msg + myKey));
         m.put("msg", msg);
         m.put("userid", user_id);
@@ -241,12 +227,13 @@ public class MainActivity extends ActionBarActivity {
         PostMessageSpec myCallSpec = new PostMessageSpec();
 
         myCallSpec.url = SERVER_URL_PREFIX + "get_local.json";
-        myCallSpec.context = MainActivity.this;
+        myCallSpec.context = ChatActivity.this;
         // Let's add the parameters.
         HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
         m.put("userid", user_id);
+        m.put("dest", other_user_id);
         myCallSpec.setParams(m);
         // Actual server call.
         if (uploader != null) {
