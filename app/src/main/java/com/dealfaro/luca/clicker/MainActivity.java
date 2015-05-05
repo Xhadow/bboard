@@ -309,11 +309,9 @@ public class MainActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        for (int i = 0; i < 10; i++) {
-            Message ael = new Message();
-            ael.msg = ml.messages[i].msg + "\n" + ml.messages[i].ts;
-            ael.buttonLabel = "Message";
-            aList.add(ael);
+        for (int i = 0; i < ml.messages.length - 1; i++) {
+            ml.messages[i].buttonLabel = "Message";
+            aList.add(ml.messages[i]);
         }
         aa.notifyDataSetChanged();
     }

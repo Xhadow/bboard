@@ -124,8 +124,6 @@ public class ChatActivity extends ActionBarActivity {
         AppInfo appInfo = new AppInfo();
         appInfo = AppInfo.getInstance(this);
         user_id = appInfo.userid;
-        Intent intent = getIntent();
-        other_user_id = intent.getStringExtra("dest");
     }
 
     @Override
@@ -197,9 +195,11 @@ public class ChatActivity extends ActionBarActivity {
         // Then, we start the call.
         PostMessageSpec myCallSpec = new PostMessageSpec();
 
-
+        Intent intent = getIntent();
+        other_user_id = intent.getStringExtra("dest");
         myCallSpec.url = SERVER_URL_PREFIX + "put_local.json";
         myCallSpec.context = ChatActivity.this;
+
         // Let's add the parameters.
         HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
@@ -225,10 +225,12 @@ public class ChatActivity extends ActionBarActivity {
     public void clickButtonRef(View v) {
         // Then, we start the call.
         PostMessageSpec myCallSpec = new PostMessageSpec();
-
+        Intent intent = getIntent();
+        other_user_id = intent.getStringExtra("dest");
         myCallSpec.url = SERVER_URL_PREFIX + "get_local.json";
         myCallSpec.context = ChatActivity.this;
         // Let's add the parameters.
+
         HashMap<String,String> m = new HashMap<>();
         m.put("lat", lat + "");
         m.put("lng", lng + "");
@@ -296,11 +298,8 @@ public class ChatActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        for (int i = 0; i < 10; i++) {
-            Message ael = new Message();
-            ael.msg = ml.messages[i].msg + "\n" + ml.messages[i].ts;
-            ael.buttonLabel = "Message";
-            aList.add(ael);
+        for (int i = 0; i < ml.messages.length - 1; i++) {
+            aList.add(ml.messages[i]);
         }
         aa.notifyDataSetChanged();
     }
