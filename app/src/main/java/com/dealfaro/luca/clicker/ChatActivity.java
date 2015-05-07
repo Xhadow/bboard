@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -34,7 +35,6 @@ import java.util.List;
 
 
 public class ChatActivity extends ActionBarActivity {
-    Location lastLocation;
     private static final String LOG_TAG = "lclicker";
 
     // This is an id for my app, to keep the key space separate from other apps.
@@ -51,13 +51,6 @@ public class ChatActivity extends ActionBarActivity {
     private static String other_user_id;
     // Uploader.
     private ServerCall uploader;
-
-    private class ListElement {
-        ListElement() {}
-
-        public String textLabel;
-        //public String buttonLabel;
-    }
 
     private ArrayList<Message> aList;
 
@@ -92,7 +85,11 @@ public class ChatActivity extends ActionBarActivity {
             // Fills in the view.
             TextView tv = (TextView) newView.findViewById(R.id.itemText);
             tv.setText(w.msg);
+            Button b = (Button) newView.findViewById(R.id.itemButton);
+            Button c = (Button) newView.findViewById(R.id.button3);
 
+            b.setVisibility(View.INVISIBLE);
+            c.setVisibility(View.INVISIBLE);
             // Set a listener for the whole list item.
             newView.setTag(w.msg);
             newView.setOnClickListener(new View.OnClickListener() {
@@ -121,8 +118,7 @@ public class ChatActivity extends ActionBarActivity {
         ListView myListView = (ListView) findViewById(R.id.listView);
         myListView.setAdapter(aa);
         aa.notifyDataSetChanged();
-        AppInfo appInfo = new AppInfo();
-        appInfo = AppInfo.getInstance(this);
+        AppInfo appInfo = AppInfo.getInstance(this);
         user_id = appInfo.userid;
     }
 

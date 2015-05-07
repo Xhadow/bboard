@@ -35,7 +35,6 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-    Location lastLocation;
     private static final String LOG_TAG = "lclicker";
 
     // This is an id for my app, to keep the key space separate from other apps.
@@ -51,13 +50,6 @@ public class MainActivity extends ActionBarActivity {
     private static String user_id;
     // Uploader.
     private ServerCall uploader;
-
-    private class ListElement {
-        ListElement() {}
-
-        public String textLabel;
-        //public String buttonLabel;
-    }
 
     private ArrayList<Message> aList;
 
@@ -92,6 +84,12 @@ public class MainActivity extends ActionBarActivity {
             // Fills in the view.
             TextView tv = (TextView) newView.findViewById(R.id.itemText);
             Button b = (Button) newView.findViewById(R.id.itemButton);
+            Button c = (Button) newView.findViewById(R.id.button3);
+            if(w.conversation == true) {
+                c.setVisibility(View.VISIBLE);
+            } else {
+                c.setVisibility(View.INVISIBLE);
+            }
             b.setText(w.buttonLabel);
             tv.setText(w.msg);
 
@@ -309,9 +307,11 @@ public class MainActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        for (int i = 0; i < ml.messages.length - 1; i++) {
-            ml.messages[i].buttonLabel = "Message";
-            aList.add(ml.messages[i]);
+        for (int i = 0; i < ml.messages.length; i++) {
+            if(ml.messages.length < 10) {
+                ml.messages[i].buttonLabel = "Message";
+                aList.add(ml.messages[i]);
+            }
         }
         aa.notifyDataSetChanged();
     }

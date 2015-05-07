@@ -12,8 +12,18 @@
         android:layout_weight="1" />
 
     <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape4"
+        android:text=""
+        android:id="@+id/button3"
+        android:layout_weight="0" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape3"
         android:text="New Button"
         android:id="@+id/itemButton"
         android:layout_weight="0" />

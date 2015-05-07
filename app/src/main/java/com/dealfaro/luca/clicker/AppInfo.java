@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  * Created by xhadow on 5/5/15.
  */
 public class AppInfo {
-    public static final String PREF_USERID = "Xhadow";
+    public static final String PREF_USERID = "Xhadow2";
 
     private static AppInfo instance = null;
 
