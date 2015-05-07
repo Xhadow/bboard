@@ -294,8 +294,10 @@ public class ChatActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        for (int i = 0; i < ml.messages.length - 1; i++) {
-            aList.add(ml.messages[i]);
+        for (int i = 0; i < ml.messages.length; i++) {
+            if(ml.messages.length < 10) {
+                aList.add(ml.messages[i]);
+            }
         }
         aa.notifyDataSetChanged();
     }
